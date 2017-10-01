@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * http://www.jungol.co.kr/bbs/board.php?bo_table=pbank&wr_id=585&sca=4040
@@ -9,15 +9,16 @@ public class Main {
     static int[][] map;
     static int[][] visitedPositions;
     static int upCount, downCount;
+    static Node[] nextPositions = new Node[1000 * 1000];
 
     private static void solve() {
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (visitedPositions[i][j] == 0) {
-                    int[][] nextPositions = new int[n][n];
-                    nextPositions[i][j] = 1;
+                    nextPositions[0] = new Node(i, j);
                     Result result = new Result();
-                    move(nextPositions, map[i][j], result);
+                    move(nextPositions, 1, map[i][j], result);
                     if (result.up > 0 && result.down == 0) {
                         upCount++;
                     } else if (result.up == 0 && result.down > 0) {
@@ -28,35 +29,34 @@ public class Main {
         }
     }
 
-    private static void move(int[][] visitingPositions, int height, Result result) {
+    private static void move(Node[] visitingPositions, int numOfVisitingPositions, int height, Result result) {
         int numOfNextPositions = 0;
-        int[][] nextPositions = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (visitingPositions[i][j] == 0 || visitedPositions[i][j] == 1) {
-                    continue;
-                }
+        for (int v = 0; v < numOfVisitingPositions; v++) {
+            int i = visitingPositions[v].x;
+            int j = visitingPositions[v].y;
 
-                visitedPositions[i][j] = 1;
+            if (visitedPositions[i][j] == 1) {
+                continue;
+            }
 
-                for (int k = i - 1; k <= i + 1; k++) {
-                    for (int l = j - 1; l <= j + 1; l++) {
-                        if ((k == i && l == j) || k < 0 || l < 0 || n <= k || n <= l) {
-                            continue;
-                        }
+            visitedPositions[i][j] = 1;
 
-                        if (map[k][l] == height) {
-                            nextPositions[k][l] = 1;
-                            numOfNextPositions++;
-                            continue;
-                        }
+            for (int k = i - 1; k <= i + 1; k++) {
+                for (int l = j - 1; l <= j + 1; l++) {
+                    if ((k == i && l == j) || k < 0 || l < 0 || n <= k || n <= l) {
+                        continue;
+                    }
 
-                        if (!result.isCompleted()) {
-                            if (map[k][l] < height) {
-                                result.down++;
-                            } else if (height < map[k][l]) {
-                                result.up++;
-                            }
+                    if (map[k][l] == height) {
+                        visitingPositions[numOfNextPositions++] = new Node(k, l);
+                        continue;
+                    }
+
+                    if (!result.isCompleted()) {
+                        if (map[k][l] < height) {
+                            result.down++;
+                        } else if (height < map[k][l]) {
+                            result.up++;
                         }
                     }
                 }
@@ -67,7 +67,7 @@ public class Main {
             return;
         }
 
-        move(nextPositions, height, result);
+        move(visitingPositions, numOfNextPositions, height, result);
     }
 
     public static void main(String[] args) {
@@ -88,6 +88,16 @@ public class Main {
         solve();
 
         System.out.println(downCount + " " + upCount);
+    }
+
+    private static class Node {
+        int x;
+        int y;
+
+        public Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     private static class Result {
