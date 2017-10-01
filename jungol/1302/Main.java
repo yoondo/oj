@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 /**
  * http://www.jungol.co.kr/bbs/board.php?bo_table=pbank&wr_id=585&sca=4040
+ * http://main.edu.pl/en/archive/oi/14/grz
  */
 public class Main {
     static int n;
@@ -40,12 +41,22 @@ public class Main {
 
                 for (int k = i - 1; k <= i + 1; k++) {
                     for (int l = j - 1; l <= j + 1; l++) {
-                        if (k == i && j == l) {
+                        if ((k == i && l == j) || k < 0 || l < 0 || n <= k || n <= l) {
                             continue;
                         }
 
-                        if (explore(k, l, nextPositions, height, result)) {
+                        if (map[k][l] == height) {
+                            nextPositions[k][l] = 1;
                             numOfNextPositions++;
+                            continue;
+                        }
+
+                        if (!result.isCompleted()) {
+                            if (map[k][l] < height) {
+                                result.down++;
+                            } else if (height < map[k][l]) {
+                                result.up++;
+                            }
                         }
                     }
                 }
@@ -57,25 +68,6 @@ public class Main {
         }
 
         move(nextPositions, height, result);
-    }
-
-    private static boolean explore(int i, int j, int[][] nextPositions, int height, Result result) {
-        if (i < 0 || j < 0 || n <= i || n <= j) {
-            return false;
-        }
-
-        if (map[i][j] == height) {
-            nextPositions[i][j] = 1;
-            return true;
-        }
-
-        if (map[i][j] < height) {
-            result.down++;
-        } else if (height < map[i][j]) {
-            result.up++;
-        }
-
-        return false;
     }
 
     public static void main(String[] args) {
@@ -102,8 +94,8 @@ public class Main {
         int up = 0;
         int down = 0;
 
-        boolean isDraw() {
-            return (up > 0 && down > 0) || (up == 0 && down == 0);
+        boolean isCompleted() {
+            return up > 0 && down > 0;
         }
     }
 }
