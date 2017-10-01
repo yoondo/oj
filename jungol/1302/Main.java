@@ -12,7 +12,6 @@ public class Main {
     static Node[] nextPositions = new Node[1000 * 1000];
 
     private static void solve() {
-
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (visitedPositions[i][j] == 0) {

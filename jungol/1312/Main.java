@@ -5,7 +5,7 @@ public class Main {
     static int[] kaist = new int[1000];
     static int[] postech = new int[1000];
 
-    public static int solve() {
+    private static int solve() {
         int result = 0;
 
         int pn = 0;
