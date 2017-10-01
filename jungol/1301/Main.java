@@ -1,10 +1,5 @@
-package c1301;
-
 import java.util.Scanner;
 
-/**
- * http://www.jungol.co.kr/bbs/board.php?bo_table=pbank&wr_id=584&sca=4040
- */
 public class Main {
     static int k, n, m;
     static int[] startLocations;
