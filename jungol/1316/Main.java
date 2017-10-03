@@ -6,18 +6,27 @@ public class Main {
 
     private static int solve() {
         int count = 0;
-        for (int i = 0; i < n; i++) {
-            if (i == 0) {
-                continue;
+        boolean asc = true;
+        for (int i = 1; i < n; i++) {
+            if (i == 1) {
+                asc = series[0] < series[1];
             }
 
-            if (series[i] < series[i - 1]) {
-                if (i == 1) {
+            if (asc) {
+                if (series[i - 1] > series[i]) {
                     count++;
-                } else {
-                    count += 2;
+                    asc = false;
+                }
+            } else {
+                if (series[i - 1] < series[i]) {
+                    count++;
+                    asc = true;
                 }
             }
+        }
+
+        if (!asc) {
+            count++;
         }
 
         return count;
