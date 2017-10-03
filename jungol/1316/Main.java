@@ -6,8 +6,8 @@ public class Main {
     static int n;
     static Index sortedIndex;
 
-    private static int solve(List<Index> visitingIndexes) {
-        List<Index> nextIndexes = new ArrayList<>();
+    private static int solve(Set<Index> visitingIndexes) {
+        Set<Index> nextIndexes = new HashSet<>();
         for (Index index : visitingIndexes) {
             if (index.isVisited()) {
                 continue;
@@ -32,7 +32,7 @@ public class Main {
         return -1;
     }
 
-    private static void decompose(Index index, List<Index> nextIndexes) {
+    private static void decompose(Index index, Set<Index> nextIndexes) {
         for (int i = 2; i <= n; i++) {
             for (int j = 0; j <= n - i; j++) {
                 nextIndexes.add(index.flip(j, i));
@@ -54,16 +54,11 @@ public class Main {
         Index flip(int start, int length) {
             int[] newIndex = new int[n];
 
-            for (int i = 0; i < start; i++) {
-                newIndex[i] = index[i];
-            }
+            System.arraycopy(index, 0, newIndex, 0, start);
+            System.arraycopy(index, start + length, newIndex, start + length, n - (start + length));
 
             for (int i = 0; i < length; i++) {
                 newIndex[start + i] = index[start + length - 1 - i];
-            }
-
-            for (int i = start + length; i < n; i++) {
-                newIndex[i] = index[i];
             }
 
             return new Index(newIndex, n);
@@ -88,15 +83,7 @@ public class Main {
         }
 
         public boolean equals(Object object) {
-            if (this == object) return true;
-            if (object == null || getClass() != object.getClass()) return false;
-            if (!super.equals(object)) return false;
-
-            Index index1 = (Index) object;
-
-            if (!java.util.Arrays.equals(index, index1.index)) return false;
-
-            return true;
+            return isSame((Index) object);
         }
 
         public int hashCode() {
@@ -136,7 +123,7 @@ public class Main {
 
         Main.sortedIndex = new Index(sortedIndex, n);
 
-        List<Index> nextIndexes = new ArrayList<>();
+        Set<Index> nextIndexes = new HashSet<>();
         nextIndexes.add(new Index(index, n));
 
         System.out.println(solve(nextIndexes));
