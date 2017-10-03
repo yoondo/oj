@@ -1,23 +1,17 @@
 import java.util.*;
 
 public class Main {
+    static final int MAX_SIZE = 88888888;
+
     static int n;
     static Index sortedIndex;
 
     private static int solve(Set<Index> visitingIndexes) {
         Set<Index> nextIndexes = new HashSet<>();
         for (Index index : visitingIndexes) {
-            if (index.isVisited()) {
-                continue;
+            if (explore(index, nextIndexes)) {
+                return 1;
             }
-
-            if (index.isSame(sortedIndex)) {
-                return 0;
-            }
-
-            index.markAsVisited();
-
-            decompose(index, nextIndexes);
         }
 
         if (!nextIndexes.isEmpty()) {
@@ -30,23 +24,38 @@ public class Main {
         return -1;
     }
 
-    private static void decompose(Index index, Set<Index> nextIndexes) {
+    private static boolean explore(Index index, Set<Index> nextIndexes) {
         for (int i = 2; i <= n; i++) {
             for (int j = 0; j <= n - i; j++) {
-                nextIndexes.add(index.flip(j, i));
+                Index nextIndex = index.flip(j, i);
+
+                if (nextIndex.isVisited()) {
+                    continue;
+                }
+
+                if (nextIndex.isSame(sortedIndex)) {
+                    return true;
+                }
+
+                nextIndexes.add(nextIndex);
+                nextIndex.markAsVisited();
             }
         }
+
+        return false;
     }
 
     private static class Index {
-        final static Set<Index> visitedIndexes = new HashSet<>();
+        final static boolean[] visitedIndexes = new boolean[MAX_SIZE];
 
         final int n;
         final int[] index;
+        final int key;
 
         Index(int[] index, int n) {
             this.index = index;
             this.n = n;
+            this.key = generateKey(index, n);
         }
 
         Index flip(int start, int length) {
@@ -73,11 +82,11 @@ public class Main {
         }
 
         boolean isVisited() {
-            return visitedIndexes.contains(this);
+            return visitedIndexes[key];
         }
 
         void markAsVisited() {
-            visitedIndexes.add(this);
+            visitedIndexes[key] = true;
         }
 
         public boolean equals(Object object) {
@@ -88,6 +97,19 @@ public class Main {
             int result = super.hashCode();
             result = 31 * result + Arrays.hashCode(index);
             return result;
+        }
+
+        private static int generateKey(int[] index, int n) {
+            int key = 0;
+            for (int i = 0; i < n; i++) {
+                int temp = index[i];
+                for (int j = 0; j < i; j++) {
+                    temp *= 10;
+                }
+                key += temp;
+            }
+
+            return key;
         }
     }
 
@@ -121,8 +143,14 @@ public class Main {
 
         Main.sortedIndex = new Index(sortedIndex, n);
 
+        Index initialIndex = new Index(index, n);
         Set<Index> nextIndexes = new HashSet<>();
-        nextIndexes.add(new Index(index, n));
+        nextIndexes.add(initialIndex);
+
+        if (initialIndex.isSame(Main.sortedIndex)) {
+            System.out.println(0);
+            return;
+        }
 
         System.out.println(solve(nextIndexes));
     }
