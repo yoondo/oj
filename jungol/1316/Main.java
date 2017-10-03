@@ -1,5 +1,13 @@
 import java.util.*;
 
+/**
+ * http://www.jungol.co.kr/bbs/board.php?bo_table=pbank&sca=4040
+ * <p>
+ * 결국 이번에도 다음과 같은 이슈로 어려움을 겪음
+ * - 반복되는 메모리 할당에 따른 시간 지연
+ * - 결과 판단 시점을 최대한 앞당기지 못하고 다음 단계로 지연
+ * - 이런 이슈로 Collection을 사용해 해결해야 했음 - 훨씬 더 나은 대안이 있을 듯
+ */
 public class Main {
     static final int MAX_SIZE = 88888888;
 
