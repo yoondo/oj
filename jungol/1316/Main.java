@@ -1,8 +1,6 @@
 import java.util.*;
 
 public class Main {
-    static final int MAX_SIZE = 88888888;
-
     static int n;
     static Index sortedIndex;
 
