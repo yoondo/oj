@@ -6,12 +6,9 @@ public class Main {
     static int n;
     static Index sortedIndex;
 
-    private static int solve(Index[] visitingIndexes, int numOfVisitingIndexes) {
-        int numOfNextIndexes = 0;
-        Index[] nextIndexes = new Index[MAX_SIZE];
-        for (int i = 0; i < numOfVisitingIndexes; i++) {
-            Index index = visitingIndexes[i];
-
+    private static int solve(List<Index> visitingIndexes) {
+        List<Index> nextIndexes = new ArrayList<>();
+        for (Index index : visitingIndexes) {
             if (index.isVisited()) {
                 continue;
             }
@@ -22,11 +19,11 @@ public class Main {
 
             index.markAsVisited();
 
-            numOfNextIndexes += decompose(index, nextIndexes, numOfNextIndexes);
+            decompose(index, nextIndexes);
         }
 
-        if (numOfNextIndexes > 0) {
-            int result = solve(nextIndexes, numOfNextIndexes);
+        if (!nextIndexes.isEmpty()) {
+            int result = solve(nextIndexes);
             if (result >= 0) {
                 return result + 1;
             }
@@ -35,31 +32,26 @@ public class Main {
         return -1;
     }
 
-    private static int decompose(Index index, Index[] nextIndexes, int numOfNextIndexes) {
-        int count = 0;
+    private static void decompose(Index index, List<Index> nextIndexes) {
         for (int i = 2; i <= n; i++) {
             for (int j = 0; j <= n - i; j++) {
-                nextIndexes[numOfNextIndexes + count++] = index.flip(j, i);
+                nextIndexes.add(index.flip(j, i));
             }
         }
-
-        return count;
     }
 
     private static class Index {
-        final static boolean[] visitedIndexes = new boolean[MAX_SIZE];
+        final static Set<Index> visitedIndexes = new HashSet<>();
 
         final int n;
         final int[] index;
-        final int key;
 
-        public Index(int[] index, int n) {
+        Index(int[] index, int n) {
             this.index = index;
             this.n = n;
-            this.key = generateKey(index, n);
         }
 
-        public Index flip(int start, int length) {
+        Index flip(int start, int length) {
             int[] newIndex = new int[n];
 
             for (int i = 0; i < start; i++) {
@@ -77,17 +69,9 @@ public class Main {
             return new Index(newIndex, n);
         }
 
-        public boolean isVisited() {
-            return visitedIndexes[key];
-        }
-
-        public void markAsVisited() {
-            visitedIndexes[key] = true;
-        }
-
-        public boolean isSame(Index index) {
+        boolean isSame(Index that) {
             for (int i = 0; i < n; i++) {
-                if (this.index[i] != index.index[i]) {
+                if (this.index[i] != that.index[i]) {
                     return false;
                 }
             }
@@ -95,17 +79,30 @@ public class Main {
             return true;
         }
 
-        private static int generateKey(int[] index, int n) {
-            int key = 0;
-            for (int i = 0; i < n; i++) {
-                int temp = index[i];
-                for (int j = 0; j < i; j++) {
-                    temp *= 10;
-                }
-                key += temp;
-            }
+        boolean isVisited() {
+            return visitedIndexes.contains(this);
+        }
 
-            return key;
+        void markAsVisited() {
+            visitedIndexes.add(this);
+        }
+
+        public boolean equals(Object object) {
+            if (this == object) return true;
+            if (object == null || getClass() != object.getClass()) return false;
+            if (!super.equals(object)) return false;
+
+            Index index1 = (Index) object;
+
+            if (!java.util.Arrays.equals(index, index1.index)) return false;
+
+            return true;
+        }
+
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + Arrays.hashCode(index);
+            return result;
         }
     }
 
@@ -139,9 +136,9 @@ public class Main {
 
         Main.sortedIndex = new Index(sortedIndex, n);
 
-        Index[] nextIndexes = new Index[1];
-        nextIndexes[0] = new Index(index, n);
+        List<Index> nextIndexes = new ArrayList<>();
+        nextIndexes.add(new Index(index, n));
 
-        System.out.println(solve(nextIndexes, 1));
+        System.out.println(solve(nextIndexes));
     }
 }
