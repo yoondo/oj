@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+/**
+ * http://www.jungol.co.kr/bbs/board.php?bo_table=pbank&wr_id=596&sca=4040
+ * <p>
+ * 로직이 깔끔하지 못해서 코드가 복잡해졌다.
+ * - 더 나은 로직으로 설계하거나
+ * - 사전 계획을 좀 더 분명하게 수립하고, 로직 및 메소드 명의 흔들림이 없도록 준비해야겠음
+ */
 public class Main {
     static int n;
 
