@@ -15,7 +15,7 @@ public class Main {
 
     static int getMinimumDifference(int x, int y) {
         int diff = x - y;
-        while (diff != 0 && x % 2 == y % 2 && x > 0 && y > 0) {
+        while (diff != 0 && x % 2 == y % 2) {
             if (x % 2 == 0) {
                 x /= 2;
                 y /= 2;
